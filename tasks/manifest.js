@@ -19,10 +19,11 @@ module.exports = function(grunt) {
 
   grunt.registerMultiTask('manifest', 'Turn manifest files into concatenated files.', function () {
 
-    // grunt.loadNpmTasks('grunt-contrib-concat');
-
     var concat = grunt.config.get('concat') || {},
         tasks = [];
+
+    // Load dependent tasks
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
     options = this.options({
       sourceMap: false,
