@@ -1,8 +1,9 @@
-# grunt-manifest-concat (WIP)
+# grunt-manifest-concat
 
 Manifest based script concatenation. Inspired by [Sprockets](https://github.com/sstephenson/sprockets#sprockets-directives).
 
 ## Getting Started
+
 This plugin requires Grunt `^0.4.5`.
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
@@ -18,7 +19,6 @@ grunt.loadNpmTasks('grunt-manifest-concat');
 ```
 
 ## Usage
-
 
 ### Setup
 
@@ -58,7 +58,7 @@ The directives are defined inside the `contents` array, where the `key` is the *
 
 - Filenames are case sensitive.
 - The order stipulated inside `contents` will be preserved.
-- Duplicated files are only included one, the first time they appear.
+- Duplicated files are only included once, the first time they appear.
 - The file paths are relative to the manifest file.
 
 
@@ -118,20 +118,6 @@ Inserts the contents of a file. If a file is required multiple times It will onl
   "contents": [
     "jquery.min.js",
     { "require": "jquery.history.js" }
-  ]
-}
-```
-
-### include
-
-Subject: `File` (`cwd` aware)
-
-Works like `require` but It doesn't check if the file has been already been included or required.
-
-```
-{
-  "contents": [
-    { "include": "lib/something.js" }
   ]
 }
 ```

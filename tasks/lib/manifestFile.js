@@ -84,16 +84,14 @@ exports.init = function(grunt) {
     this._readContents(json.contents);
   };
 
-  ManifestFile.prototype._addFile = function(filePath, skipDuplicated) {
-    if (typeof skipDuplicated === 'undefined')
-      skipDuplicated = true;
-
+  ManifestFile.prototype._addFile = function(filePath) {
     if (!grunt.file.isFile(filePath)) {
       grunt.verbose.error('`' + filePath + '` is not a file.');
       return;
     }
 
-    if (skipDuplicated && this.contents.indexOf(filePath) != -1)
+    // Skip duplicated files
+    if (this.contents.indexOf(filePath) != -1)
       return;
 
     this.contents.push(filePath);
@@ -123,10 +121,6 @@ exports.init = function(grunt) {
   ManifestFile.prototype._processDirective = function(type, value) {
     var self = this;
     switch(type) {
-      case 'include':
-        var subject = path.join(self.file.dir, self.options.cwd, value);
-        self._addFile(subject, false);
-      break;
       case 'require':
         var subject = path.join(self.file.dir, self.options.cwd, value);
         self._addFile(subject);
