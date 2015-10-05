@@ -11,9 +11,9 @@
 exports.init = function(grunt) {
   var exports = {};
 
-  var fs = require('fs'),
+  var path = require('path'),
       util = require('util'),
-      path = require('path'),
+      crypto = require('crypto'),
       chalk = require('chalk');
 
   exports.new = function(filePath, dest, options) {
@@ -65,15 +65,15 @@ exports.init = function(grunt) {
 
     this.file = {
       target: null,
+      taskName: null,
       path: filePath,
       base: pathObject.base,
       dir: pathObject.dir,
-      name: pathObject.name,
-      taskName: 'manifest_' + pathObject.name.toLowerCase().replace(/[^a-z0-9]/gi, '_')
+      name: pathObject.name
     };
 
-    // Generate target based on the gruntfile config dest
     this.file.target = this._generateTarget(dest);
+    this.file.taskName = this._generateTaskName();
 
     this._readOptions(json.options);
     this._readContents(json.contents);
@@ -167,6 +167,16 @@ exports.init = function(grunt) {
 
     // Otherwise consider it a directory
     return path.join(value, this.file.name + '.' + this.options.extension);
+  }
+
+  ManifestFile.prototype._generateTaskName = function() {
+    // Use a hash based on the path to prevent taskname collisions
+    return (
+      'manifest_'
+      + this.file.name.toLowerCase().replace(/[^a-z0-9]/gi, '_')
+      + '_'
+      + crypto.createHash('md5').update(this.file.path).digest('hex').substr(0, 8)
+    );
   }
 
   ManifestFile.prototype._printOptions = function() {
