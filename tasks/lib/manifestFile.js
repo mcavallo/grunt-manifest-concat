@@ -79,21 +79,44 @@ exports.init = function(grunt) {
     this._readContents(json.contents);
   };
 
+  ManifestFile.prototype._addFile = function(filePath, skipDuplicated) {
+    if (typeof skipDuplicated === 'undefined')
+      skipDuplicated = true;
+
+    if (skipDuplicated && this.contents.indexOf(filePath) != -1)
+      return;
+
+    this.contents.push(filePath);
+    grunt.log.writeln(chalk.green('Added') + ' ' + filePath);
+  }
+
+  ManifestFile.prototype._addDirectory = function(dirPath) {
+    var self = this;
+    if (!grunt.file.isDir(dirPath))
+      return false;
+
+    grunt.file.expand(path.join(dirPath, '*.' + self.options.extension)).forEach(function(filePath) {
+      self._addFile(filePath);
+    });
+  }
+
   ManifestFile.prototype._processDirective = function(type, value) {
+    var self = this;
     switch(type) {
       case 'require':
-        var item = path.join(this.file.dir, this.options.cwd, value);
-        if (this.contents.indexOf(item) != -1)
-          return;
-        this.contents.push(item);
+        var subject = path.join(self.file.dir, self.options.cwd, value);
+        self._addFile(subject);
+      break;
+      case 'require_directory':
+        var subject = path.join(self.file.dir, value);
+        grunt.file.expand(subject).forEach(function(dir) {
+          self._addDirectory(dir);
+        });
       break;
       default:
         grunt.verbose.error('Directive `' + type + '` unhandled.');
-        return;
       break;
     }
-
-    grunt.log.writeln(chalk.green('Added') + ' ' + item);
   }
 
   ManifestFile.prototype._readContents = function(contents) {
