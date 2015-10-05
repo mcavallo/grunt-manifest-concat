@@ -84,6 +84,9 @@ Tells **grunt-contrib-concat** tasks to include a banner. The banner cannot be c
 
 Type: `String` Default: `"js"`
 
+The extension dictates what type of files are found by the **require_directory** and **required_tree** directives and will also be used to construct the result file for each manifest `<manifest name>.<extension>`.
+
+
 ### cwd
 
 Type: `String` Default: `""`
@@ -95,7 +98,7 @@ Gives the option of setting a shared base path for all contents. Only some direc
 
 ### require
 
-It can be specified either by using a string that contains the path or by providing an object:
+Inserts the contents of a file. If a file is required multiple times It will only appear once. It can be specified either by using a `string` that contains the path or by providing an `object`:
 
 ```
 {
@@ -107,10 +110,21 @@ It can be specified either by using a string that contains the path or by provid
     { "require": "jquery.history.js" }
   ]
 }
-
 ```
 
 The `require` directive can take advantage of the `cwd` option.
+
+### require_directory
+
+Inserts the contents of all files inside the given path. Files are required in alphabethical order.
+
+```
+{
+  "contents": [
+    { "require_directory": "vendor" }
+  ]
+}
+```
 
 ### More to come
 
