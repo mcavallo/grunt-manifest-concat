@@ -1,6 +1,6 @@
 # grunt-manifest-concat (WIP)
 
-Manifest based script concatenation. Inspired by Sprockets directives.
+Manifest based script concatenation. Inspired by [Sprockets](https://github.com/sstephenson/sprockets#sprockets-directives).
 
 ## Getting Started
 This plugin requires Grunt `^0.4.5`.
@@ -44,8 +44,10 @@ This is the basic structure of a manifest file:
 ```
 {
   "contents": [
-    { "require": "vendor/jquery.min.js" },
-    { "require": "vendor/jquery.history.js" }
+    { "require_tree": "vendor" },
+    { "require_directory": "lib/modules" },
+    "lib/main.js",
+    "lib/debug.js"
   ]
 }
 ```
@@ -104,6 +106,8 @@ It's possible to override the `dest` value for each individual manifest file by 
 
 ### require
 
+Subject: `File` (`cwd` aware)
+
 Inserts the contents of a file. If a file is required multiple times It will only appear once. It can be specified either by using a `string` that contains the path or by providing an `object`:
 
 ```
@@ -118,20 +122,44 @@ Inserts the contents of a file. If a file is required multiple times It will onl
 }
 ```
 
-The `require` directive can take advantage of the `cwd` option.
+### include
 
-### require_directory
+Subject: `File` (`cwd` aware)
 
-Inserts the contents of all files inside the given path. Files are required in alphabethical order.
+Works like `require` but It doesn't check if the file has been already been included or required.
 
 ```
 {
   "contents": [
-    { "require_directory": "vendor" }
+    { "include": "lib/something.js" }
   ]
 }
 ```
 
-### More to come
+### require_directory
 
-The goal is to implement the same set of directives [Sprockets](https://github.com/sstephenson/sprockets#sprockets-directives) has.
+Subject: `Directory`
+
+Inserts the contents of all files inside the given path. Files are matched based by extension and are required in alphabethical order.
+
+```
+{
+  "contents": [
+    { "require_directory": "vendor/modules" }
+  ]
+}
+```
+
+### require_tree
+
+Subject: `Directory`
+
+Works like `require_directory` but It recursively search for files inside the given path.
+
+```
+{
+  "contents": [
+    { "require_tree": "vendor" }
+  ]
+}
+```
