@@ -86,6 +86,11 @@ exports.init = function(grunt) {
     if (typeof skipDuplicated === 'undefined')
       skipDuplicated = true;
 
+    if (!grunt.file.isFile(filePath)) {
+      grunt.verbose.error('`' + filePath + '` is not a file.');
+      return;
+    }
+
     if (skipDuplicated && this.contents.indexOf(filePath) != -1)
       return;
 
@@ -93,19 +98,33 @@ exports.init = function(grunt) {
     grunt.log.writeln(chalk.green('Added') + ' ' + filePath);
   }
 
-  ManifestFile.prototype._addDirectory = function(dirPath) {
-    var self = this;
-    if (!grunt.file.isDir(dirPath))
-      return false;
+  ManifestFile.prototype._addFilesAtDirByPattern = function(dirPath, pattern) {
+    if (!grunt.file.isDir(dirPath)) {
+      grunt.verbose.error('`' + dirPath + '` is not a directory.');
+      return;
+    }
 
-    grunt.file.expand(path.join(dirPath, '*.' + self.options.extension)).forEach(function(filePath) {
+    var self = this;
+    grunt.file.expand(path.join(dirPath, pattern)).forEach(function(filePath) {
       self._addFile(filePath);
     });
+  }
+
+  ManifestFile.prototype._addDirectory = function(dirPath) {
+    this._addFilesAtDirByPattern(dirPath, '*.' + this.options.extension);
+  }
+
+  ManifestFile.prototype._addTree = function(dirPath) {
+    this._addFilesAtDirByPattern(dirPath, '**/*.' + this.options.extension);
   }
 
   ManifestFile.prototype._processDirective = function(type, value) {
     var self = this;
     switch(type) {
+      case 'include':
+        var subject = path.join(self.file.dir, self.options.cwd, value);
+        self._addFile(subject, false);
+      break;
       case 'require':
         var subject = path.join(self.file.dir, self.options.cwd, value);
         self._addFile(subject);
@@ -114,6 +133,12 @@ exports.init = function(grunt) {
         var subject = path.join(self.file.dir, value);
         grunt.file.expand(subject).forEach(function(dir) {
           self._addDirectory(dir);
+        });
+      break;
+      case 'require_tree':
+        var subject = path.join(self.file.dir, value);
+        grunt.file.expand(subject).forEach(function(dir) {
+          self._addTree(dir);
         });
       break;
       default:
