@@ -13,17 +13,19 @@ exports.init = function(grunt) {
 
   var path = require('path'),
       util = require('util'),
-      crypto = require('crypto'),
+      crypto = require('crypto');
+
+  var extend = require('node.extend'),
       chalk = require('chalk');
 
-  exports.new = function(filePath, dest, options) {
-    return new ManifestFile(filePath, dest, options);
+  exports.new = function(params) {
+    return new ManifestFile(params);
   }
 
-  function ManifestFile(filePath, dest, options) {
-    this.options = options;
+  function ManifestFile(params) {
+    this.options = extend(true, {}, params.options);
     this.contents = [];
-    this._init(filePath, dest);
+    this._init(params.filePath, params.dest);
   }
 
   ManifestFile.prototype.isValid = function() {

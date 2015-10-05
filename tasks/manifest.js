@@ -44,7 +44,11 @@ module.exports = function(grunt) {
 
         // Scan the directory for manifest files
         grunt.file.expand(path.join(src, '*.json')).forEach(function(manifestPath) {
-          var manifest = manifestFile.new(manifestPath, f.orig.dest, options);
+          var manifest = manifestFile.new({
+            filePath: manifestPath,
+            dest: f.orig.dest,
+            options: options
+          });
 
           // Skip manifest if It's invalid
           if (!manifest.isValid())
