@@ -72,7 +72,10 @@ exports.init = function(grunt) {
       name: pathObject.name
     };
 
-    this.file.target = this._generateTarget(dest);
+    // Reading config from grunt, so expecting only directories
+    this.file.target = this._generateTarget(dest, false);
+
+    // Unique to this task
     this.file.taskName = this._generateTaskName();
 
     this._readOptions(json.options);
@@ -152,18 +155,24 @@ exports.init = function(grunt) {
 
       if (typeof options.cwd != 'undefined')
         this.options.cwd = options.cwd;
+
+      if (typeof options.dest != 'undefined')
+        this.file.target = this._generateTarget(options.dest, true);
     }
 
     this._printOptions();
   };
 
-  ManifestFile.prototype._generateTarget = function(value) {
+  ManifestFile.prototype._generateTarget = function(value, filesAllowed) {
     if (!value)
       return null;
 
-    // If has a point assume It's a file already
-    if (value.indexOf('.') > -1)
-      return value;
+    // Attempt to match files
+    if (filesAllowed) {
+      var ext = '.' + this.options.extension;
+      if (value.substr(-ext.length) == ext)
+        return value;
+    }
 
     // Otherwise consider it a directory
     return path.join(value, this.file.name + '.' + this.options.extension);

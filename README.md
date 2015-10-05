@@ -93,6 +93,12 @@ Type: `String` Default: `""`
 
 Gives the option of setting a shared base path for all contents. Only some directives can take advantage of this feature.
 
+### dest
+
+Type: `String` Default: `Read from Gruntfile`
+
+It's possible to override the `dest` value for each individual manifest file by using this option. It can be a **directory** or a **file** with an extension matching the `extension` option.
+
 
 ## Available Directives
 
