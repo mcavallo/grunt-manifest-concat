@@ -37,7 +37,7 @@ grunt.initConfig({
 
 When this task is run It will search for `*.json` files inside the `src` directory, process those files and follow their directives to finally output the concatenated result to the `dest` directory.
 
-### Manifest File
+### Manifest Files
 
 This is the basic structure of a manifest file:
 
