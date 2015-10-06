@@ -54,13 +54,33 @@ This is the basic structure of a manifest file:
 
 The directives are defined inside the `contents` array, where the `key` is the **directive type**, and the `value` is the **directive subject**.
 
-**A few details to consider:**
+### General Behaviour Notes
 
-- Filenames are case sensitive.
-- The order stipulated inside `contents` will be preserved.
-- Duplicated files are only included once, the first time they appear.
-- The file paths are relative to the manifest file.
+#### Paths
 
+All paths are case sensitive and relative to the manifest file. It's possible to use absolute paths. URLs to remote resources are not supported.
+
+#### Order
+
+The order sprcified inside `contents` will be preserved, and while `require_directory` and `require_tree` take the files alphabethically It's possible to use mix the `require` if you need a specific file to be added first.
+
+```
+{
+  "contents": [
+    "lib/modules/helpers.js",
+    { "require_directory": "lib/modules/models" },
+    { "require_tree": "lib/modules" }
+  ]
+}
+```
+
+#### Content Duplication
+
+It was decided not to implement the [include directive](https://github.com/sstephenson/sprockets#the-include-directive) as [grunt-contrib-concat](https://github.com/gruntjs/grunt-contrib-concat) tasks will get rid of any duplicated files and keep each file once, the first time they appear.
+
+#### Clashing Manifest Names
+
+It's recommended to have unique names for manifests as they can overwrite each other during the output process.
 
 ## Options
 
