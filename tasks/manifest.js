@@ -15,15 +15,26 @@ var fs = require('fs'),
 module.exports = function(grunt) {
 
   var options,
+      baseCwd = process.cwd(),
       manifestFile = require('./lib/manifestFile').init(grunt);
+
+  // Solves dependencies not loading if the base was changed on runtime
+  var fromBaseCwd = function(callback) {
+    var cwd = process.cwd();
+    process.chdir(baseCwd);
+    callback.call(this);
+    process.chdir(cwd);
+  }
 
   grunt.registerMultiTask('manifest', 'Turn manifest files into concatenated files.', function () {
 
     var concat = grunt.config.get('concat') || {},
         tasks = [];
 
-    // Load dependent tasks
-    grunt.loadNpmTasks('grunt-contrib-concat');
+    fromBaseCwd(function() {
+      // Load dependent tasks
+      grunt.loadNpmTasks('grunt-contrib-concat');
+    });
 
     options = this.options({
       sourceMap: false,
