@@ -23,9 +23,8 @@ exports.init = function(grunt) {
   }
 
   function ManifestFile(params) {
-    this.options = extend(true, {}, params.options);
     this.contents = [];
-    this._init(params.filePath, params.dest);
+    this._init(params.options, params.filePath, params.dest);
   }
 
   ManifestFile.prototype.isValid = function() {
@@ -60,9 +59,12 @@ exports.init = function(grunt) {
     });
   }
 
-  ManifestFile.prototype._init = function(filePath, dest) {
+  ManifestFile.prototype._init = function(options, filePath, dest) {
     grunt.log.writeln('\nProccessing ' + chalk.cyan(filePath));
-    var json = grunt.file.readJSON(filePath);
+
+    // Cloning with extend to keep the options local this manifest only
+    this.options = extend(true, {}, options);
+
     var pathObject = path.parse(filePath);
 
     this.file = {
@@ -80,8 +82,7 @@ exports.init = function(grunt) {
     // Unique to this task
     this.file.taskName = this._generateTaskName();
 
-    this._readOptions(json.options);
-    this._readContents(json.contents);
+    this._readManifest(filePath);
   };
 
   ManifestFile.prototype._addFile = function(filePath) {
@@ -143,6 +144,16 @@ exports.init = function(grunt) {
     }
   }
 
+  ManifestFile.prototype._readManifest = function(filePath) {
+    try {
+      var json = grunt.file.readJSON(filePath);
+      this._readOptions(json.options);
+      this._readContents(json.contents);
+    } catch (err) {
+      grunt.log.warn(err);
+    }
+  }
+
   ManifestFile.prototype._readContents = function(contents) {
     if (!contents || !(contents instanceof Array))
       return false;
@@ -151,14 +162,12 @@ exports.init = function(grunt) {
       // Strings are considered a plain require
       if (typeof contents[i] === 'string') {
         this._processDirective('require', contents[i]);
-        continue;
       }
 
       // If key/value pair is found proceed using the keys as type
-      if (contents[i] instanceof Object) {
-        for (var key in contents[i]) {
+      else if (contents[i] instanceof Object) {
+        for (var key in contents[i])
           this._processDirective(key.toLowerCase(), contents[i][key]);
-        }
       }
     }
   };
