@@ -26,8 +26,36 @@ module.exports = function(grunt) {
     process.chdir(cwd);
   }
 
-  grunt.registerMultiTask('manifest', 'Turn manifest files into concatenated files.', function () {
+  var eachSourceDir = function(callback) {
+    this.files.forEach(function(f) {
+      f.orig.src.forEach(function(src) {
+        // Only proceed if the src is a directory
+        if (grunt.file.isDir(src))
+          callback.call(this, src, f.orig.dest);
+        else
+          printWarning('Specified source is not a directory.');
+      });
+    });
+  }
 
+  var eachManifest = function(src, dest, options, callback) {
+    grunt.file.expand(path.join(src, '*.json')).forEach(function(manifestPath) {
+      var manifest = manifestFile.new({
+        filePath: manifestPath,
+        dest: dest,
+        options: options
+      });
+
+      if (manifest.isValid())
+        callback.call(this, manifest);
+    });
+  }
+
+  var printWarning = function(msg) {
+    grunt.log.writeln(chalk.yellow('SKIPPED ') + ' ' + msg);
+  }
+
+  grunt.registerMultiTask('manifest', 'Turn manifest files into concatenated files.', function () {
     var concat = grunt.config.get('concat') || {},
         tasks = [];
 
@@ -43,32 +71,15 @@ module.exports = function(grunt) {
       cwd: ''
     });
 
-    this.files.forEach(function(f) {
-      f.orig.src.forEach(function(src) {
-        // Only proceed if the src is a directory
-        if (!grunt.file.isDir(src))
-          return grunt.log.writeln(chalk.yellow('SKIPPED ') + ' Specified source is not a directory.');
+    eachSourceDir(function(src, dest) {
+      // If dest is set, It should be a directory
+      if (dest && !grunt.file.isDir(dest))
+        return printWarning('Specified destination is not a directory.');
 
-        // If dest is set, It should be a directory
-        if (!grunt.file.isDir(f.orig.dest))
-          return grunt.log.writeln(chalk.yellow('SKIPPED ') + ' Specified destination is not a directory.');
-
-        // Scan the directory for manifest files
-        grunt.file.expand(path.join(src, '*.json')).forEach(function(manifestPath) {
-          var manifest = manifestFile.new({
-            filePath: manifestPath,
-            dest: f.orig.dest,
-            options: options
-          });
-
-          // Skip manifest if It's invalid
-          if (!manifest.isValid())
-            return;
-
-          // Create the concat subtask for each manifest file
-          concat[manifest.taskName()] = manifest.taskSettings();
-          tasks.push(manifest.taskName());
-        });
+      // Create the concat subtask for each manifest file
+      eachManifest(src, dest, options, function(manifest) {
+        concat[manifest.taskName()] = manifest.taskSettings();
+        tasks.push(manifest.taskName());
       });
     });
 
