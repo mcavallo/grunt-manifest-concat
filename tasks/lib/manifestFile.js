@@ -177,16 +177,16 @@ exports.init = function(grunt) {
     // over any previously set options
 
     if (options) {
-      if (typeof options.sourceMap != 'undefined')
+      if (typeof options.sourceMap !== 'undefined')
         this.options.sourceMap = options.sourceMap ? true : false;
 
-      if (typeof options.banner != 'undefined')
+      if (typeof options.banner !== 'undefined')
         this.options.banner = options.banner ? true : false;
 
-      if (typeof options.cwd != 'undefined')
+      if (typeof options.cwd !== 'undefined')
         this.options.cwd = options.cwd;
 
-      if (typeof options.dest != 'undefined')
+      if (typeof options.dest !== 'undefined')
         this.file.target = this._generateTarget(options.dest, true);
     }
 
