@@ -26,8 +26,8 @@ module.exports = function(grunt) {
     process.chdir(cwd);
   }
 
-  var eachSourceDir = function(callback) {
-    this.files.forEach(function(f) {
+  var eachSourceDir = function(files, callback) {
+    files.forEach(function(f) {
       f.orig.src.forEach(function(src) {
         // Only proceed if the src is a directory
         if (grunt.file.isDir(src))
@@ -71,7 +71,7 @@ module.exports = function(grunt) {
       cwd: ''
     });
 
-    eachSourceDir(function(src, dest) {
+    eachSourceDir(this.files, function(src, dest) {
       // If dest is set, It should be a directory
       if (dest && !grunt.file.isDir(dest))
         return printWarning('Specified destination is not a directory.');
