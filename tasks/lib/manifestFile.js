@@ -23,17 +23,35 @@ exports.init = function(grunt) {
   }
 
   function ManifestFile(params) {
+    grunt.log.writeln('\nProccessing ' + chalk.cyan(params.filePath));
+
+    // Cloning with extend to keep the options local this manifest only
+    this.options = extend(true, {}, params.options);
     this.contents = [];
-    this._init(params.options, params.filePath, params.dest);
+
+    var pathObject = path.parse(params.filePath);
+
+    this.file = {
+      target: null,
+      taskName: null,
+      path: params.filePath,
+      base: pathObject.base,
+      dir: pathObject.dir,
+      name: pathObject.name
+    };
+
+    // Reading config from grunt, so expecting only directories
+    this.file.target = this._generateTarget(params.dest, false);
+
+    // Unique to this task
+    this.file.taskName = this._generateTaskName();
+
+    this._readManifest(params.filePath);
   }
 
   ManifestFile.prototype.isValid = function() {
-    // Must have files
-    if (!this.contents.length)
-      return false;
-
-    // Must have a target (dest)
-    if (!this.file.target)
+    // Must have files and a valid target
+    if (!this.contents.length || !this.file.target)
       return false;
 
     return true;
@@ -58,32 +76,6 @@ exports.init = function(grunt) {
       dest: this.file.target
     });
   }
-
-  ManifestFile.prototype._init = function(options, filePath, dest) {
-    grunt.log.writeln('\nProccessing ' + chalk.cyan(filePath));
-
-    // Cloning with extend to keep the options local this manifest only
-    this.options = extend(true, {}, options);
-
-    var pathObject = path.parse(filePath);
-
-    this.file = {
-      target: null,
-      taskName: null,
-      path: filePath,
-      base: pathObject.base,
-      dir: pathObject.dir,
-      name: pathObject.name
-    };
-
-    // Reading config from grunt, so expecting only directories
-    this.file.target = this._generateTarget(dest, false);
-
-    // Unique to this task
-    this.file.taskName = this._generateTaskName();
-
-    this._readManifest(filePath);
-  };
 
   ManifestFile.prototype._addFile = function(filePath) {
     if (!grunt.file.isFile(filePath)) {
@@ -223,7 +215,6 @@ exports.init = function(grunt) {
       return;
 
     var values = [];
-
     for (var key in this.options) {
       values.push(chalk.cyan(
         key + '=' + util.inspect(this.options[key])
