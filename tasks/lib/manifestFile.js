@@ -1,6 +1,6 @@
 /*
  * grunt-manifest-concat
- * https://github.com/mcavallo
+ * https://github.com/mcavallo/grunt-manifest-concat
  *
  * Copyright (c) 2015 Mariano Cavallo
  * Licensed under the MIT license.
