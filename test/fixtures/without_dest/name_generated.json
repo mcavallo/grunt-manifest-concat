@@ -1,0 +1,8 @@
+{
+  "options": {
+    "dest": "tmp/without_dest"
+  },
+  "contents": [
+    "../shared/file_1.js"
+  ]
+}

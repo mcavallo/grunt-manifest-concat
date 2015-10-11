@@ -1,0 +1,6 @@
+{
+  "contents": [
+    { "require_directory": "../shared/level_1/level_2/level_3" },
+    { "require_tree": "../shared/level_1" }
+  ]
+}

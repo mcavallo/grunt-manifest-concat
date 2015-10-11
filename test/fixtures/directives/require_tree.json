@@ -1,0 +1,5 @@
+{
+  "contents": [
+    { "require_tree": "../shared/level_1" }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "contents": [
+    { "require": "../shared/file_3.js" },
+    { "require": "../shared/file_1.js" },
+    { "require": "../shared/file_2.js" }
+  ]
+}

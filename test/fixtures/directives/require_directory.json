@@ -1,0 +1,5 @@
+{
+  "contents": [
+    { "require_directory": "../shared/level_1" }
+  ]
+}

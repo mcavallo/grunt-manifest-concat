@@ -1,0 +1,6 @@
+{
+  "contents": [
+    "../shared/level_1/level_1_2.js",
+    { "require_directory": "../shared/level_1" }
+  ]
+}
