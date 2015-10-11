@@ -73,10 +73,6 @@ module.exports = function(grunt) {
     });
 
     eachSourceDir(this.files, function(src, dest) {
-      // If dest is set on the grunt config it should be a directory
-      if (dest && !grunt.file.isDir(dest))
-        return printWarning('Specified destination is not a directory.');
-
       // Create the concat subtask for each manifest file
       eachManifest(src, dest, options, function(manifest) {
         concat[manifest.taskName()] = manifest.taskSettings();
