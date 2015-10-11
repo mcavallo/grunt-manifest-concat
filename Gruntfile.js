@@ -13,12 +13,10 @@ module.exports = function(grunt) {
   var path = require('path');
 
   grunt.initConfig({
-    // Before generating any new files, remove any previously-created files.
     clean: {
       tests: ['tmp']
     },
 
-    // Configuration to be run (and then tested).
     manifest: {
       directives: {
         src: 'test/fixtures/directives',
@@ -52,7 +50,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // Unit tests.
     nodeunit: {
       tests: ['test/*_test.js'],
       options: {
@@ -65,15 +62,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-  grunt.task.registerTask('setup_tests', '', function() {
-    if (!grunt.file.exists('tmp'))
-      grunt.file.mkdir('tmp')
-  });
-
-  // Whenever the "test" task is run, first clean the "tmp" dir, then run this
-  // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'setup_tests', 'manifest', 'nodeunit']);
-
+  grunt.registerTask('test', ['clean', 'manifest', 'nodeunit']);
   grunt.registerTask('default', ['test']);
 
 };
