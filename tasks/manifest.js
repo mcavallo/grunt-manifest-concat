@@ -27,29 +27,16 @@ module.exports = function(grunt) {
     process.chdir(cwd);
   }
 
-  var eachSourceDir = function(files, callback) {
-    files.forEach(function(f) {
-      f.orig.src.forEach(function(src) {
-        // Only proceed if the src is a directory
-        if (grunt.file.isDir(src))
-          callback.call(this, src, f.orig.dest);
-        else
-          printWarning('Specified source is not a directory.');
-      });
+  var findManifests = function(source) {
+    var manifests = [];
+    source.forEach(function(f) {
+      if (grunt.file.isFile(f) && f.substr(-4) === 'json' && manifests.indexOf(f) === -1) {
+        manifests.push(f);
+      } else if (grunt.file.isDir(f)) {
+        manifests = manifests.concat(findManifests(grunt.file.expand(path.join(f, '*.json'))));
+      }
     });
-  }
-
-  var eachManifest = function(src, dest, options, callback) {
-    grunt.file.expand(path.join(src, '*.json')).forEach(function(manifestPath) {
-      var manifest = manifestFile.new({
-        filePath: manifestPath,
-        dest: dest,
-        options: options
-      });
-
-      if (manifest.isValid())
-        callback.call(this, manifest);
-    });
+    return manifests;
   }
 
   var printWarning = function(msg) {
@@ -72,12 +59,19 @@ module.exports = function(grunt) {
       cwd: ''
     });
 
-    eachSourceDir(this.files, function(src, dest) {
-      // Create the concat subtask for each manifest file
-      eachManifest(src, dest, options, function(manifest) {
+    var dest = this.files[0].dest;
+    findManifests(this.files[0].src).forEach(function(manifestPath) {
+      var manifest = manifestFile.new({
+        filePath: manifestPath,
+        dest: dest,
+        options: options
+      });
+
+      if (manifest.isValid()) {
+        // Create the concat subtask for each manifest file
         concat[manifest.taskName()] = manifest.taskSettings();
         tasks.push(manifest.taskName());
-      });
+      }
     });
 
     // Only proceed if any tasks were added
