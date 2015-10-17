@@ -62,7 +62,7 @@ module.exports = function(grunt) {
 
     fromBaseCwd(function() {
       // Load dependent tasks
-      grunt.loadNpmTasks('grunt-contrib-concat');
+      grunt.task.loadTasks(path.resolve(__dirname, '../node_modules/grunt-contrib-concat/tasks'));
     });
 
     options = this.options({
