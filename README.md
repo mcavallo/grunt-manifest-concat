@@ -64,7 +64,7 @@ All paths are case sensitive and relative to the manifest file. It's possible to
 
 The order sprcified inside `contents` will be preserved, and while `require_directory` and `require_tree` take the files alphabethically It's possible to use mix the `require` if you need a specific file to be added first.
 
-```
+```json
 {
   "contents": [
     "lib/modules/helpers.js",
