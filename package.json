@@ -1,7 +1,7 @@
 {
   "name": "grunt-manifest-concat",
   "description": "Manifest based script concatenation. Inspired by Sprockets.",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "homepage": "https://github.com/mcavallo/grunt-manifest-concat",
   "repository": {
     "type": "git",
