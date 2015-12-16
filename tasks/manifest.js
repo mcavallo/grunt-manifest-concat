@@ -16,16 +16,7 @@ var chalk = require('chalk');
 module.exports = function(grunt) {
 
   var options,
-      baseCwd = process.cwd(),
       manifestFile = require('./lib/manifestFile').init(grunt);
-
-  // Solves dependencies not loading if the base was changed on runtime
-  var fromBaseCwd = function(callback) {
-    var cwd = process.cwd();
-    process.chdir(baseCwd);
-    callback.call(this);
-    process.chdir(cwd);
-  }
 
   var findManifests = function(source) {
     var manifests = [];
@@ -47,7 +38,7 @@ module.exports = function(grunt) {
     var concat = grunt.config.get('concat') || {},
         tasks = [];
 
-    grunt.task.loadTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
     options = this.options({
       sourceMap: false,
