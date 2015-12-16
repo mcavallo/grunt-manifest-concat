@@ -47,10 +47,7 @@ module.exports = function(grunt) {
     var concat = grunt.config.get('concat') || {},
         tasks = [];
 
-    fromBaseCwd(function() {
-      // Load dependent tasks
-      grunt.task.loadTasks(path.resolve(__dirname, '../node_modules/grunt-contrib-concat/tasks'));
-    });
+    grunt.task.loadTasks('grunt-contrib-concat');
 
     options = this.options({
       sourceMap: false,
